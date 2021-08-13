@@ -5,6 +5,13 @@
 cc cl_getc.c int_parser_getc.c
 */
 
+typedef enum {
+    NUMBER,
+    SPACE,
+} TokenType;
+
+int parse_one(int current_ch, int* out_val, TokenType* out_type);
+
 int main() {
     int answer1 = 0;
     int answer2 = 0;
