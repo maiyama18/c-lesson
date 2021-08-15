@@ -143,100 +143,80 @@ void parser_print_all() {
 
 
 
+static void assert_parse_one_result(int ch, struct Token actual, struct Token expect) {
+    assert(ch == EOF);
 
+    assert(actual.ltype == expect.ltype);
 
-static void test_parse_one_number() {
-    char* input = "123";
-    int expect = 123;
+    switch (expect.ltype) {
+    case NUMBER:
+        assert(actual.u.number == expect.u.number);
+        break;
+    case EXECUTABLE_NAME:
+    case LITERAL_NAME:
+        assert(strcmp(actual.u.name, expect.u.name) == 0);
+        break;
+    case OPEN_CURLY:
+    case CLOSE_CURLY:
+        assert(actual.u.onechar == expect.u.onechar);
+        break;
+    case SPACE:
+    case END_OF_FILE:
+    case UNKNOWN:
+        break;
+    }
+}
 
+static void verify_parse_one(char* input, struct Token expect) {
     struct Token token = { UNKNOWN, {0} };
     int ch;
 
     cl_getc_set_src(input);
-
     ch = parse_one(EOF, &token);
 
-    assert(ch == EOF);
-    assert(token.ltype == NUMBER);
-    assert(expect == token.u.number);
+    assert_parse_one_result(ch, token, expect);
+}
+
+static void test_parse_one_number() {
+    char* input = "123";
+    struct Token expect = { NUMBER, {.number = 123} };
+
+    verify_parse_one(input, expect);
 }
 
 static void test_parse_one_empty_should_return_END_OF_FILE() {
     char* input = "";
-    int expect = END_OF_FILE;
+    struct Token expect = { END_OF_FILE, {} };
 
-    struct Token token = { UNKNOWN, {0} };
-    int ch;
-
-    cl_getc_set_src(input);
-    ch = parse_one(EOF, &token);
-
-    assert(ch == EOF);
-    assert(token.ltype == expect);
+    verify_parse_one(input, expect);
 }
 
 static void test_parse_one_executable_name() {
     char* input = "add";
-    char* expect_name = "add";
-    int expect_type = EXECUTABLE_NAME;
+    struct Token expect = { EXECUTABLE_NAME, {.name = "add"} };
 
-    struct Token token = { UNKNOWN, {0} };
-    int ch;
-
-    cl_getc_set_src(input);
-    ch = parse_one(EOF, &token);
-
-    assert(ch == EOF);
-    assert(token.ltype == expect_type);
-    assert(strcmp(token.u.name, expect_name) == 0);
+    verify_parse_one(input, expect);
 }
 
 static void test_parse_one_literal_name() {
     char* input = "/add";
-    char* expect_name = "add";
-    int expect_type = LITERAL_NAME;
+    struct Token expect = { LITERAL_NAME, {.name = "add"} };
 
-    struct Token token = { UNKNOWN, {0} };
-    int ch;
-
-    cl_getc_set_src(input);
-    ch = parse_one(EOF, &token);
-
-    assert(ch == EOF);
-    assert(token.ltype == expect_type);
-    assert(strcmp(token.u.name, expect_name) == 0);
+    verify_parse_one(input, expect);
 }
 
 static void test_parse_one_open_curly() {
     char* input = "{";
-    char expect_char = '{';
-    int expect_type = OPEN_CURLY;
+    struct Token expect = { OPEN_CURLY, {.onechar = '{'} };
 
-    struct Token token = { UNKNOWN, {0} };
-    int ch;
-
-    cl_getc_set_src(input);
-    ch = parse_one(EOF, &token);
-
-    assert(ch == EOF);
-    assert(token.ltype == expect_type);
-    assert(token.u.onechar == expect_char);
+    verify_parse_one(input, expect);
 }
 
 static void test_parse_one_close_curly() {
     char* input = "}";
-    char expect_char = '}';
-    int expect_type = CLOSE_CURLY;
+    struct Token expect = { CLOSE_CURLY, {.onechar = '}'} };
 
-    struct Token token = { UNKNOWN, {0} };
-    int ch;
-
-    cl_getc_set_src(input);
-    ch = parse_one(EOF, &token);
-
-    assert(ch == EOF);
-    assert(token.ltype == expect_type);
-    assert(token.u.onechar == expect_char);
+    verify_parse_one(input, expect);
 }
 
 static void unit_tests() {
