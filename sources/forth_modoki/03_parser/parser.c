@@ -28,14 +28,42 @@ struct Token {
 
 #define NAME_SIZE 256
 
+int isdigit(int c) {
+    return '0' <= c && c <= '9';
+}
+
 int parse_one(int prev_ch, struct Token* out_token) {
-    /****
-     *
-     * TODO: Implement here!
-     *
-    ****/
-    out_token->ltype = UNKNOWN;
-    return EOF;
+    if (prev_ch == EOF) prev_ch = cl_getc();
+
+    if (isdigit(prev_ch)) {
+        int val = prev_ch - '0';
+
+        int c;
+        while ((c = cl_getc()) != EOF && isdigit(c)) {
+            val *= 10;
+            val += c - '0';
+        }
+
+        out_token->ltype = NUMBER;
+        out_token->u.number = val;
+
+        return c;
+    }
+    else if (prev_ch == ' ') {
+        int c;
+        while ((c = cl_getc()) != EOF && c == ' ');
+
+        out_token->ltype = SPACE;
+        return c;
+    }
+    else if (prev_ch == EOF) {
+        out_token->ltype = END_OF_FILE;
+        return EOF;
+    }
+    else {
+        out_token->ltype = UNKNOWN;
+        return EOF;
+    }
 }
 
 
@@ -119,7 +147,7 @@ static void unit_tests() {
 int main() {
     unit_tests();
 
-    cl_getc_set_src("123 45 add /some { 2 3 add } def");
-    parser_print_all();
+    // cl_getc_set_src("123 45 add /some { 2 3 add } def");
+    // parser_print_all();
     return 0;
 }
