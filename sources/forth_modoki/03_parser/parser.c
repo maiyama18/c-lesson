@@ -56,6 +56,20 @@ int parse_one(int prev_ch, struct Token* out_token) {
         out_token->ltype = SPACE;
         return c;
     }
+    else if ('A' <= prev_ch && prev_ch <= 'z') {
+        char* name = malloc(NAME_SIZE * sizeof(char));
+        name[0] = prev_ch;
+
+        int c, i = 1;
+        while ((c = cl_getc()) != EOF && c != ' ') {
+            name[i++] = c;
+        }
+        name[i] = '\0';
+
+        out_token->ltype = EXECUTABLE_NAME;
+        out_token->u.name = name;
+        return c;
+    }
     else if (prev_ch == EOF) {
         out_token->ltype = END_OF_FILE;
         return EOF;
@@ -138,10 +152,26 @@ static void test_parse_one_empty_should_return_END_OF_FILE() {
     assert(token.ltype == expect);
 }
 
+static void test_parse_one_executable_name() {
+    char* input = "add";
+    char* expect_name = "add";
+    int expect_type = EXECUTABLE_NAME;
+
+    struct Token token = { UNKNOWN, {0} };
+    int ch;
+
+    cl_getc_set_src(input);
+    ch = parse_one(EOF, &token);
+
+    assert(ch == EOF);
+    assert(token.ltype == expect_type);
+    assert(strcmp(token.u.name, expect_name) == 0);
+}
 
 static void unit_tests() {
     test_parse_one_empty_should_return_END_OF_FILE();
     test_parse_one_number();
+    test_parse_one_executable_name();
 }
 
 int main() {
