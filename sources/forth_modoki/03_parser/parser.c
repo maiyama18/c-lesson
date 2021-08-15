@@ -10,7 +10,7 @@ enum LexicalType {
     EXECUTABLE_NAME,
     LITERAL_NAME,
     OPEN_CURLY,
-    CLOSE_CURLY, 
+    CLOSE_CURLY,
     END_OF_FILE,
     UNKNOWN
 };
@@ -22,17 +22,17 @@ struct Token {
     union {
         int number;
         char onechar;
-        char *name;
+        char* name;
     } u;
 };
 
 #define NAME_SIZE 256
 
-int parse_one(int prev_ch, struct Token *out_token) {
+int parse_one(int prev_ch, struct Token* out_token) {
     /****
-     * 
+     *
      * TODO: Implement here!
-     * 
+     *
     ****/
     out_token->ltype = UNKNOWN;
     return EOF;
@@ -48,33 +48,32 @@ void parser_print_all() {
 
     do {
         ch = parse_one(ch, &token);
-        if(token.ltype != UNKNOWN) {
-            switch(token.ltype) {
-                case NUMBER:
-                    printf("num: %d\n", token.u.number);
-                    break;
-                case SPACE:
-                    printf("space!\n");
-                    break;
-                case OPEN_CURLY:
-                    printf("Open curly brace '%c'\n", token.u.onechar);
-                    break;
-                case CLOSE_CURLY:
-                    printf("Close curly brace '%c'\n", token.u.onechar);
-                    break;
-                case EXECUTABLE_NAME:
-                    printf("EXECUTABLE_NAME: %s\n", token.u.name);
-                    break;
-                case LITERAL_NAME:
-                    printf("LITERAL_NAME: %s\n", token.u.name);
-                    break;
-
-                default:
-                    printf("Unknown type %d\n", token.ltype);
-                    break;
+        if (token.ltype != UNKNOWN) {
+            switch (token.ltype) {
+            case NUMBER:
+                printf("num: %d\n", token.u.number);
+                break;
+            case SPACE:
+                printf("space!\n");
+                break;
+            case OPEN_CURLY:
+                printf("Open curly brace '%c'\n", token.u.onechar);
+                break;
+            case CLOSE_CURLY:
+                printf("Close curly brace '%c'\n", token.u.onechar);
+                break;
+            case EXECUTABLE_NAME:
+                printf("EXECUTABLE_NAME: %s\n", token.u.name);
+                break;
+            case LITERAL_NAME:
+                printf("LITERAL_NAME: %s\n", token.u.name);
+                break;
+            default:
+                printf("Unknown type %d\n", token.ltype);
+                break;
             }
         }
-    }while(ch != EOF);
+    } while (ch != EOF);
 }
 
 
@@ -82,10 +81,10 @@ void parser_print_all() {
 
 
 static void test_parse_one_number() {
-    char *input = "123";
+    char* input = "123";
     int expect = 123;
 
-    struct Token token = {UNKNOWN, {0}};
+    struct Token token = { UNKNOWN, {0} };
     int ch;
 
     cl_getc_set_src(input);
@@ -98,10 +97,10 @@ static void test_parse_one_number() {
 }
 
 static void test_parse_one_empty_should_return_END_OF_FILE() {
-    char *input = "";
+    char* input = "";
     int expect = END_OF_FILE;
 
-    struct Token token = {UNKNOWN, {0}};
+    struct Token token = { UNKNOWN, {0} };
     int ch;
 
     cl_getc_set_src(input);

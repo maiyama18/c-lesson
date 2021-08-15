@@ -6,7 +6,7 @@ static int pos = 0;
 
 
 int cl_getc() {
-    if(strlen(input) == pos)
+    if (strlen(input) == pos)
         return EOF;
     return input[pos++];
 }
