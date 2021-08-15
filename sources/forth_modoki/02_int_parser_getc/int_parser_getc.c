@@ -69,7 +69,7 @@ int parse_one(int current_ch, int* out_val, TokenType* out_type) {
         return c;
     }
     else {
-        return 0;
+        return EOF;
     }
 }
 
