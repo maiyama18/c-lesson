@@ -83,6 +83,11 @@ int parse_one(int prev_ch, struct Token* out_token) {
         out_token->u.name = name;
         return c;
     }
+    else if (prev_ch == '{') {
+        out_token->ltype = OPEN_CURLY;
+        out_token->u.onechar = '{';
+        return cl_getc();
+    }
     else if (prev_ch == EOF) {
         out_token->ltype = END_OF_FILE;
         return EOF;
@@ -197,11 +202,28 @@ static void test_parse_one_literal_name() {
     assert(strcmp(token.u.name, expect_name) == 0);
 }
 
+static void test_parse_one_open_curly() {
+    char* input = "{";
+    char expect_char = '{';
+    int expect_type = OPEN_CURLY;
+
+    struct Token token = { UNKNOWN, {0} };
+    int ch;
+
+    cl_getc_set_src(input);
+    ch = parse_one(EOF, &token);
+
+    assert(ch == EOF);
+    assert(token.ltype == expect_type);
+    assert(token.u.onechar == expect_char);
+}
+
 static void unit_tests() {
     test_parse_one_empty_should_return_END_OF_FILE();
     test_parse_one_number();
     test_parse_one_executable_name();
     test_parse_one_literal_name();
+    test_parse_one_open_curly();
 }
 
 int main() {
