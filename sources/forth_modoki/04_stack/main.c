@@ -50,10 +50,18 @@ void test_stack_pop_one_literal_name() {
     verify_stack_pop(inputs, 1, expects, 2);
 }
 
+void test_stack_pop_two_literals() {
+    Literal inputs[] = { { NAME, {.name = "hello"} }, { NUMBER, {.number = -1} } };
+    Literal* expects[] = { &inputs[1], &inputs[0], NULL };
+
+    verify_stack_pop(inputs, 2, expects, 3);
+}
+
 int main() {
     test_stack_pop_empty();
     test_stack_pop_one_literal_number();
     test_stack_pop_one_literal_name();
+    test_stack_pop_two_literals();
 
     return 0;
 }
