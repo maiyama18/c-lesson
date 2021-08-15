@@ -1,6 +1,5 @@
 #include "clesson.h"
 #include <assert.h>
-#include <ctype.h>
 
 /*
 cc cl_getc.c int_parser_getc.c
@@ -12,6 +11,7 @@ typedef enum {
 } TokenType;
 
 int parse_one(int current_ch, int* out_val, TokenType* out_type);
+int isdigit(int c);
 
 void test_parse_one_123();
 void test_parse_one_123_456();
@@ -61,9 +61,9 @@ int parse_one(int current_ch, int* out_val, TokenType* out_type) {
         *out_val = val;
         return c;
     }
-    else if (isspace(current_ch)) {
+    else if (current_ch == ' ') {
         int c;
-        while ((c = cl_getc()) != EOF && isspace(c));
+        while ((c = cl_getc()) != EOF && c == ' ');
 
         *out_type = SPACE;
         return c;
@@ -71,6 +71,10 @@ int parse_one(int current_ch, int* out_val, TokenType* out_type) {
     else {
         return 0;
     }
+}
+
+int isdigit(int c) {
+    return '0' <= c && c <= '9';
 }
 
 void test_parse_one_123() {
