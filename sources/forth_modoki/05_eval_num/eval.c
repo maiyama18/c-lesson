@@ -19,10 +19,8 @@ void eval() {
         if (token.ltype != LT_UNKNOWN) {
             switch (token.ltype) {
             case LT_NUMBER: {
-                StackElement* element = malloc(sizeof(StackElement));
-                element->type = ET_NUMBER;
-                element->u.number = token.u.number;
-                stack_push(element);
+                StackElement element = { ET_NUMBER, {.number = token.u.number} };
+                stack_push(&element);
                 break;
             }
             case LT_EXECUTABLE_NAME:
@@ -34,10 +32,8 @@ void eval() {
                         break;
                     }
 
-                    StackElement* element = malloc(sizeof(StackElement));
-                    element->type = ET_NUMBER;
-                    element->u.number = e1->u.number + e2->u.number;
-                    stack_push(element);
+                    StackElement element = { ET_NUMBER, {.number = e1->u.number + e2->u.number} };
+                    stack_push(&element);
                     break;
                 }
             case LT_SPACE:
