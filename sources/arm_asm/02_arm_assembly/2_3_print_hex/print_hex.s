@@ -9,6 +9,11 @@ _start:
     ldr r0,=0x101f1000
     ldr r1,=0xdeadbeaf
     mov r8, #8 // counter
+// print '0x'    
+    mov r2, #0x30
+    str r2, [r0]
+    mov r2, #0x78
+    str r2, [r0]
 print_hex:
     mov r2, r1
     lsl r1, r1, #4 // deadbeaf -> eadbeaf0
