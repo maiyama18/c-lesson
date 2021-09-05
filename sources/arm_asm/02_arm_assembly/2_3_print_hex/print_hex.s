@@ -6,9 +6,28 @@
 */
 .globl _start
 _start:
+    ldr r0,=0x101f1000
     ldr r1,=0xdeadbeaf
-    b print_hex
+    mov r8, #8 // counter
 print_hex:
-    // TODO: implement here
+    mov r2, r1
+    lsl r1, r1, #4 // deadbeaf -> eadbeaf0
+    lsr r2, r2, #28 // deadbeaf -> 0000000d
+    cmp r2, #0x0a 
+    bge print_single_hex_alpha
+    b print_single_hex_digit
+print_single_hex_digit:
+    add r2, r2, #0x30
+    str r2, [r0]
+    b check_printed_all
+print_single_hex_alpha:
+    sub r2, r2, #0x0a
+    add r2, r2, #0x41
+    str r2, [r0]
+    b check_printed_all
+check_printed_all:
+    sub r8, r8, #1
+    cmp r8, #0
+    bgt print_hex
 end:
     b end
